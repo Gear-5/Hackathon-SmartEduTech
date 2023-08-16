@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>SMARTEDUPATH</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f0f0f0;
+                margin: 0;
+                padding: 0;
+            }
+            
+            header {
+                background-color: #34b0e0; /* Warna biru muda */
+                color: white;
+                text-align: center;
+                padding: 4em 0; /* Menambahkan padding atas dan bawah */
+                margin-bottom: 20px; /* Menambahkan margin bawah */
+            }
+    
+            h1 {
+                margin: 0;
+                font-size: 2.5em;
+            }
+    
+            h2 {
+                text-align: center;
+                font-size: 1.5em;
+                margin-top: 1.5em;
+            }
+
+            p.tagline {
+            font-size: 1.2em;
+            font-style: italic; /* Membuat tagline menjadi italic */
+            font-family: monospace;
+            color: #ffffff; /* Warna teks abu-abu gelap */
+            margin-top: 0.5em;
+        }
+    
+        form {
+            max-width: 800px;
+            margin: 2em auto;
+            padding: 1em;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5em;
+        }
+
+        input[type="file"],
+        input[type="text"] {
+            width: 98%;
+            padding: 0.6em;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            margin-bottom: 0.5em; /* Menambahkan jarak bawah untuk input */
+        }
+
+        input[type="submit"] {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 0.5em 1em;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-top: 1em; /* Menambahkan jarak atas untuk tombol */
+        }
+
+        #query-result {
+            max-width: 400px;
+            margin: 2em auto;
+            padding: 1em;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .logo {
+            max-width: 100px; /* Atur lebar maksimum logo */
+            display: block;
+            margin: 0 auto; /* Pusatkan logo horizontal */
+        }
+    </style>
+    </head>
+    <body>
+        <header>
+            
+            <h1>SmartEduPath</h1>
+            <p class="tagline">"Navigating Education Choices with AI"</p>
+        </header>
+    
+    <h2>Upload Nilai Anda</h2>
+        <form id="upload-form" action="/upload" method="post" enctype="multipart/form-data">
+            <label for="knowledge-file">Pilih File:</label>
+            <input type="file" id="knowledge-file" name="knowledge-file" multiple>
+            <br>
+            <input type="submit" value="Upload">
+        </form>
+
+    <h2>Tanyakan kepada Kami</h2>
+    <form id="query-form">
+        <label for="query-input">Masukkan Pertanyaan Anda:</label>
+        <input type="text" id="query-input" name="query-input">
+        <br>
+        <input type="submit" value="Submit">
+    </form>
+    
+    <div id="query-result"></div>
+    
+    <script>
+        // Handle form submission for uploading knowledge
+        document.getElementById('upload-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var form = event.target;
+            var formData = new FormData(form);
+            
+            fetch('/upload', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJfaWQiOjEyMywidXNlcm5hbWUiOiJqb2huX2RvZSJ9LCJleHAiOjE3MjM2MTI0Nzl9.z4MBKlGw1H7P0j83_YNgWQE8wOhmCMnGn3HrL3xXDOM'
+                }
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                console.log(data);
+                alert(data.message);
+            })
+            .catch(function(error) {
+                console.error(error);
+                alert('Error uploading knowledge');
+            });
+        });
+        
+        // Handle form submission for making a query
+        document.getElementById('query-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var form = event.target;
+            var query = form.elements['query-input'].value;
+            
+            fetch('/query', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJfaWQiOjEyMywidXNlcm5hbWUiOiJqb2huX2RvZSJ9LCJleHAiOjE3MjM2MTI0Nzl9.z4MBKlGw1H7P0j83_YNgWQE8wOhmCMnGn3HrL3xXDOM'
+                },
+                body: JSON.stringify({
+                    query: query
+                })
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                console.log(data);
+                document.getElementById('query-result').innerText = 'Answer: ' + data.answer;
+            })
+            .catch(function(error) {
+                console.error(error);
+                alert('Error making query');
+            });
+        });
+    </script>
+</body>
+</html>
